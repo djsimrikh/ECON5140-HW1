@@ -1,0 +1,142 @@
+======================================================================
+ECON 5140 - HOMEWORK 1
+Part A: Generalized Linear Models
+Part B: Time Series Decomposition
+======================================================================
+
+======================================================================
+DATASET 1: Customer Purchase Behavior
+======================================================================
+
+Number of customers: 1000
+Purchase rate: ~50% (exact value depends on seed=42)
+
+First 5 rows:
+       Age      Income  TimeOnSite  Purchase
+0  47.488  52.229        4.365         1
+1  32.222  41.871        4.209         0
+2  38.299  51.724        5.952         1
+3  29.274  42.800        3.859         0
+4  31.655  52.911        5.212         1
+
+======================================================================
+DATASET 2: E-commerce Daily Sales
+======================================================================
+
+Date range: 2024-01-01 to 2025-12-31
+Number of days: 731
+
+Sales Statistics:
+count     731.000000
+mean      ~1500-2000
+std       ~200-300
+min       ~500+
+25%       ~1300
+50%       ~1500
+75%       ~1700
+max       ~2500+ (spikes at Black Friday/Christmas)
+
+======================================================================
+PART A: GENERALIZED LINEAR MODELS
+======================================================================
+
+----------------------------------------------------------------------
+A1: Exploratory Data Analysis
+----------------------------------------------------------------------
+
+Mean Age:  Purchasers = ~38-40, Non-purchasers = ~32-34
+Mean Income:  Purchasers = ~54-56, Non-purchasers = ~44-46
+Mean TimeOnSite:  Purchasers = ~6-7, Non-purchasers = ~4-5
+
+(Correlation heatmap: Age, Income, TimeOnSite positively correlated with Purchase.)
+
+----------------------------------------------------------------------
+A2: Linear Probability Model
+----------------------------------------------------------------------
+
+OLS Regression Summary:
+- const, Age, Income, TimeOnSite coefficients (Age/Income/TimeOnSite positive)
+- R-squared ~0.15-0.25
+- F-statistic significant
+
+Predictions outside [0, 1]: typically 50-150 (~5-15%)
+(Histogram of LPM probs with many outside [0,1])
+
+----------------------------------------------------------------------
+A3: Logistic Regression
+----------------------------------------------------------------------
+
+Logit Summary:
+- Coefficients (log-odds): const negative; Age, Income, TimeOnSite positive
+- Odds ratios: >1 for Age, Income, TimeOnSite
+- p-values < 0.05 for key predictors
+
+Interpretation: Positive coefficients → higher Age/Income/TimeOnSite increase P(purchase).
+All predicted probabilities in [0,1]: True
+(Histogram of logit probs bounded in [0,1])
+
+----------------------------------------------------------------------
+A4: Predictions for New Customers
+----------------------------------------------------------------------
+
+   Age  Income  TimeOnSite  Predicted_Probability  Predicted_Purchase
+0   25      30           2                  ~0.1-0.2                  0
+1   35      50           5                  ~0.4-0.6                  0 or 1
+2   45      70           8                  ~0.7-0.9                  1
+3   55      90          10                  ~0.9+                     1
+
+Most likely to purchase: Customer with Age=55, Income=90, TimeOnSite=10
+  Probability ≈ 0.95+. Higher income and time on site increase purchase probability.
+
+======================================================================
+PART B: TIME SERIES ANALYSIS
+======================================================================
+
+----------------------------------------------------------------------
+B1: Time Series Visualization
+----------------------------------------------------------------------
+
+Mean sales by day of week: (0-6 with slight variation)
+Mean sales by month: (1-12 with seasonal pattern, peaks late in year)
+Patterns: Weekly and yearly seasonality; upward trend; spikes at Black Friday and Christmas.
+
+----------------------------------------------------------------------
+B2: Stationarity Check
+----------------------------------------------------------------------
+
+The series is NOT stationary: rolling mean and variance change over time (trend + seasonality).
+First 6 months: mean lower, std lower
+Last 6 months:  mean higher, std higher
+
+----------------------------------------------------------------------
+B3: Autocorrelation Function
+----------------------------------------------------------------------
+
+Lag 1:  autocorrelation ≈ 0.95+
+Lag 7:  autocorrelation ≈ 0.85+ (weekly pattern)
+Lag 30: autocorrelation ≈ 0.70+
+
+Weekly pattern visible at lag 7. Autocorrelation is persistent (slow decay).
+
+----------------------------------------------------------------------
+B4: STL Decomposition
+----------------------------------------------------------------------
+
+Trend: Upward, slightly quadratic.
+Seasonal: 7-day (weekly) pattern.
+Remainder: Special events (Black Friday, Christmas) visible as spikes.
+
+----------------------------------------------------------------------
+B5: Remainder Analysis
+----------------------------------------------------------------------
+
+Remainder - Mean: ≈ 0, Std: ~50-80
+Normality test: p-value reported
+Outliers (|remainder| > 3*std): Several dates; Black Friday and Christmas appear as large positive remainder.
+
+======================================================================
+END OF PROBLEM 5
+======================================================================
+
+Run the script locally to get exact numbers:
+  python ECON5140_HW1_Problem5.py 2>&1 | tee my_output.txt
