@@ -1,0 +1,4 @@
+"""Run Energy Consumption Forecasting notebook code as a script."""
+import pandas as pd
+import numpy as np
+from pathlib import Path
